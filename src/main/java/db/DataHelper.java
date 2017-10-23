@@ -5,13 +5,18 @@ import entity.HibernateUtil;
 import entity.Human;
 import entity.Streets;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -64,17 +69,16 @@ public class DataHelper {
         List<Address> addressList;
         addressList = getAddressByHouse(str);
         if (addressList != null && !addressList.isEmpty()) {
-            Collections.sort(addressList, new Comparator<Address>() {
-                @Override
-                public int compare(Address o1, Address o2) {
-                    return o1.toString().compareTo(o2.toString());
-                }
-            });
             Criteria criteria = getSession().createCriteria(Human.class);
-            criteria.add(Restrictions.between("address", addressList.get(0), addressList.get(addressList.size() - 1)));
-            return criteria.list();
+            Disjunction objDisjunction = Restrictions.disjunction();
+                for (Address address : addressList) {
+                    System.out.println(address.getId());
+                    objDisjunction.add(Restrictions.eq("address.id", address.getId()));
+                }
+                criteria.add(objDisjunction);
+                return criteria.list();
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -85,20 +89,19 @@ public class DataHelper {
             List<Address> addressList;
             addressList = getAddressByStreetid(streetsList.get(0).getId());
             if (addressList != null && !addressList.isEmpty()) {
-                Collections.sort(addressList, new Comparator<Address>() {
-                    @Override
-                    public int compare(Address o1, Address o2) {
-                        return o1.toString().compareTo(o2.toString());
-                    }
-                });
                 Criteria criteria = getSession().createCriteria(Human.class);
-                criteria.add(Restrictions.between("address", addressList.get(0), addressList.get(addressList.size() - 1)));
+                Disjunction objDisjunction = Restrictions.disjunction();
+                for (Address address : addressList) {
+                    System.out.println(address.getId());
+                    objDisjunction.add(Restrictions.eq("address.id", address.getId()));
+                }
+                criteria.add(objDisjunction);
                 return criteria.list();
             } else {
-                return null;
+                return new ArrayList<>();
             }
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -109,6 +112,9 @@ public class DataHelper {
     }
 
     public List<Streets> getStreets(String str) {
+//        System.out.println("searchbystreet");
+//        Criteria criteria = getSession().createCriteria(Streets.class);
+//        criteria.add(Restrictions.eq("streetname", str));
         List<Streets> result;
         org.hibernate.Query createQuery = getSession().createQuery("from Streets where streetname = :street_name");
         createQuery.setParameter("street_name", str);
@@ -122,7 +128,7 @@ public class DataHelper {
         queryBuilder.append("from Address ");
         queryBuilder.append("where (streetid = :street_id) ");
         queryBuilder.append("AND ");
-        queryBuilder.append("housekey = :house_key");
+        queryBuilder.append("(housekey = :house_key)");
         org.hibernate.Query query;
         query = getSession().createQuery(queryBuilder.toString());
         query.setParameter("street_id", address.getStreets().getId());

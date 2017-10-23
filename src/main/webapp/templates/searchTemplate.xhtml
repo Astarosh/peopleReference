@@ -34,7 +34,7 @@ and open the template in the editor.
                     </h:inputText>
                     <h:selectOneMenu  id="selectGenre" value="#{searchController.searchType}" styleClass="selectTypeMenu">
                         <f:selectItems value="${searchTypeController.searchList}"></f:selectItems>
-                        <f:ajax event="change" render="@form searchResultDiv humanTable addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
+                        <f:ajax event="change" render="@form searchResultDiv humanTable humanTable:0:infoForm addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
                     </h:selectOneMenu>
                 </h:form>
                 <h:outputStylesheet library="css" name="index.css" />
