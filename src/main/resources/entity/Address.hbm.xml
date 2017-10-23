@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 22, 2017 10:35:51 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="entity.Address" table="address" optimistic-lock="version">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="streets" class="entity.Streets" fetch="join">
+            <column name="streetid" not-null="true" />
+        </many-to-one>
+        <property name="housekey" type="long">
+            <column name="housekey" not-null="true" />
+        </property>
+        <set name="humans" table="human" inverse="true" lazy="true" fetch="join">
+            <key>
+                <column name="addressid" not-null="true" />
+            </key>
+            <one-to-many class="entity.Human" />
+        </set>
+    </class>
+</hibernate-mapping>

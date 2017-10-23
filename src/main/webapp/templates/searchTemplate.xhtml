@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:t="http://xmlns.jcp.org/jsf/passthrough"
+      >
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <ui:composition>
+            <div class="search_div">
+                <h1 class="title_search">#{msg.search_people}</h1>
+                <h:form styleClass="search_form" id="searchForm">
+                    <h:inputText rendered="#{!searchController.isSearchByDate}" a:placeholder="#{msg.search_input_placeholder}" id="search_input" styleClass="search_string" value="#{searchController.searchString}">
+                        <f:ajax event="keyup" render="searchResultDiv humanTable addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
+                    </h:inputText>
+                    <h:inputText rendered="#{searchController.isSearchByDate}" t:type="date" t:min="1901-12-31" t:max="#{searchController.date}" id="search_input2" styleClass="search_date_string" value="#{searchController.date}">
+                        <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                        <f:ajax event="change" render="searchResultDiv humanTable addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
+                    </h:inputText>
+                    <h:inputText rendered="#{searchController.isSearchByDate}" t:type="date" t:min="1901-12-31" t:max="#{searchController.date2}" id="search_input3" styleClass="search_date_string" value="#{searchController.date2}">
+                        <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                        <f:ajax event="change" render="searchResultDiv humanTable addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
+                    </h:inputText>
+                    <h:selectOneMenu  id="selectGenre" value="#{searchController.searchType}" styleClass="selectTypeMenu">
+                        <f:selectItems value="${searchTypeController.searchList}"></f:selectItems>
+                        <f:ajax event="change" render="@form searchResultDiv humanTable addForm" listener="#{searchController.fillHumansBySearch()}"></f:ajax>
+                    </h:selectOneMenu>
+                </h:form>
+                <h:outputStylesheet library="css" name="index.css" />
+            </div>
+        </ui:composition>
+    </body>
+</html>

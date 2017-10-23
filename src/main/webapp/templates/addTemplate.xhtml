@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:t="http://xmlns.jcp.org/jsf/passthrough">
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <ui:composition>
+            <div class="add_div">
+                <h1 class="title_search">#{msg.adding_people}</h1>
+                <h:form styleClass="search_form" id="addForm">
+                    <h:commandButton rendered="#{!searchController.isAddPeople}" styleClass="add_people_button" action="#{searchController.addPeopleShow()}" value="#{msg.add_people}">
+                        <f:ajax event="click" render="@form"></f:ajax>
+                    </h:commandButton>
+                    <h:panelGroup rendered="#{searchController.isAddPeople}" styleClass="addPeoplePanelGrid">
+                        <h:outputLabel styleClass="addInputLabel">#{msg.first_name}</h:outputLabel>
+                        <h:inputText a:placeholder="#{msg.first_name}" maxlength="20" id="add_input_first_name" styleClass="add_input" value="#{searchController.human.firstname}">
+                            <f:validator validatorId="validators.string_validator"></f:validator>
+                            <f:ajax event="keyup" render="firstNameMessage"></f:ajax>
+                            <f:ajax event="change" render="firstNameMessage"></f:ajax>
+                        </h:inputText>
+                        <h:message id="firstNameMessage" for="add_input_first_name" styleClass="error"></h:message>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.last_name}</h:outputLabel>
+                        <h:inputText a:placeholder="#{msg.last_name}" maxlength="20" id="add_input_last_name" styleClass="add_input" value="#{searchController.human.lastname}">
+                            <f:validator validatorId="validators.string_validator"></f:validator>
+                            <f:ajax event="keyup" render="lastNameMessage"></f:ajax>
+                            <f:ajax event="change" render="lastNameMessage"></f:ajax>
+                        </h:inputText>
+                        <h:message id="lastNameMessage" for="add_input_last_name" styleClass="error"></h:message>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.patronymic}</h:outputLabel>
+                        <h:inputText a:placeholder="#{msg.patronymic}" maxlength="20" id="add_input_patronymic" styleClass="add_input" value="#{searchController.human.patronymic}">
+                            <f:validator validatorId="validators.string_validator"></f:validator>
+                            <f:ajax event="keyup" render="patronymicNameMessage"></f:ajax>
+                            <f:ajax event="change" render="patronymicNameMessage"></f:ajax>
+                        </h:inputText>
+                        <h:message id="patronymicNameMessage" for="add_input_patronymic" styleClass="error"></h:message>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.sex}</h:outputLabel>
+                        <h:selectOneRadio id="add_input4" styleClass="add_input" value="#{searchController.sex}">
+                            <f:selectItem itemValue = "w" itemLabel = "#{msg.women}" />
+                            <f:selectItem itemValue = "m" itemLabel = "#{msg.man}" />
+                            <f:ajax event="change" render="@this"></f:ajax>
+                        </h:selectOneRadio>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.birthdate}</h:outputLabel>
+                        <h:inputText styleClass="add_input" required="true" requiredMessage="#{msg.enter_date}" t:type="date" t:min="1901-12-31" value="#{searchController.human.birthdate}">  
+                            <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                            <f:ajax event="change" render="@this"></f:ajax>
+                        </h:inputText>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.street}</h:outputLabel>
+                        <h:inputText a:placeholder="#{msg.street}" id="add_input_street" maxlength="25" styleClass="add_input" value="#{searchController.street.streetname}">  
+                            <f:validator validatorId="validators.string_validator"></f:validator>
+                            <f:ajax event="keyup" render="streetNameMessage"></f:ajax>
+                            <f:ajax event="change" render="streetNameMessage"></f:ajax>
+                        </h:inputText>
+                        <h:message id="streetNameMessage" for="add_input_street" styleClass="error"></h:message>
+                        <h:outputLabel styleClass="addInputLabel">#{msg.house}</h:outputLabel>
+                        <h:inputText a:placeholder="#{msg.house}" id="add_input_house" maxlength="4" styleClass="add_input" value="#{searchController.address.housekey}">  
+                            <f:validator validatorId="validators.number_validator"></f:validator>
+                            <f:ajax event="keyup" render="houseNameMessage"></f:ajax>
+                            <f:ajax event="change" render="houseNameMessage"></f:ajax>
+                        </h:inputText>
+                        <h:message id="houseNameMessage" for="add_input_house" styleClass="error"></h:message>
+                        <h:commandButton id="addSubmitButton" styleClass="add_people_save_button" action="#{searchController.saveHuman}" value="#{msg.add_people}">
+                            <f:ajax event="click" render="@form addFormError"></f:ajax>
+                        </h:commandButton>
+                        <h:commandButton immediate="true" styleClass="add_people_cancel_button" action="#{searchController.addPeopleHide}" value="#{msg.cancel}">
+                            <f:ajax event="click" render="@form"></f:ajax>
+                        </h:commandButton>
+                        <h:message id="adddFormError" for="addForm" styleClass="error"/>
+                    </h:panelGroup>
+                </h:form>
+            </div>
+        </ui:composition>
+    </body>
+</html>

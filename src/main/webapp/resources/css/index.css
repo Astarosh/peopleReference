@@ -1,0 +1,173 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 19, 2017, 7:19:29 PM
+    Author     : Ast
+*/
+body {
+    background-image:url("#{resource['images:main_bg.gif']}");
+    background-repeat: repeat;
+    background-color: #EEE;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    font-size: 14px;
+    min-height: 100%;
+    overflow: scroll;
+}
+.title_found_humans{
+    margin: 5px 0px 10px 0px;
+    font-size: 22px;
+    text-align: center;
+}
+.title_search{
+    text-align: center;
+}
+.search_div{
+    margin-top: 6%;
+    margin-left: 20%;
+    font-size: 18px;
+    text-align: left;
+    background-color: #dbe4f6;
+    min-height: 5vw;
+    vertical-align: middle;
+    padding: 10px;
+    width: 60%;
+    float:left;
+}
+
+.search_form{
+    width: 100%;
+    text-align: right;
+}
+.search_string{
+    font-size: 22px;
+    padding: 2%;
+    min-height: 2.35vw;
+    width: 65%;
+    float: left;
+}
+.search_date_string{
+    margin-right: 2%;
+    font-size: 18px;
+    padding: 2%;
+    min-height: 2.35vw;
+    width: 25%;
+    float: left;
+}
+.selectTypeMenu{
+    padding: 5px;
+    float: right;
+    font-size: 22px;
+    min-height: 5vw;
+}
+.result_div{
+    margin-top: 2%;
+    margin-left: 20%;
+    font-size: 18px;
+    text-align: left;
+    background-color: #dbe4f6;
+    min-height: 0vw;
+    vertical-align: middle;
+    padding: 10px;
+    width: 60%;
+    float:left;
+}
+.humanTable{
+    width: 100%;
+}
+.humanTable tr{
+}
+.humanTable td{
+}
+.col1{
+    width: 50%;
+    margin-right: 10%;
+}
+.col2{
+    width: 50%;
+}
+.people_info_button{
+    float: right;
+    font-size: 16px;
+    min-height: 3vw;
+}
+.people_info_button_hide{
+    margin-right: 2%;
+    float: right;
+    font-size: 16px;
+    min-height: 3vw;
+}
+.add_div{
+    margin-top: 2%;
+    margin-left: 20%;
+    font-size: 18px;
+    text-align: left;
+    background-color: #dbe4f6;
+    min-height: 5vw;
+    vertical-align: middle;
+    padding: 10px;
+    width: 60%;
+    float:left;
+}
+.addPeoplePanelGrid{
+    margin-left: 5%;
+    float: left;
+    width: 80%;
+}
+.add_people_button{
+    font-size: 18px;
+    min-height: 4vw;
+}
+.add_input{
+    font-size: 18px;
+    padding: 2%;
+    height: 2vw;
+    width: 65%;
+    float: right;
+    margin-bottom: 1.5%;
+}
+.addInputLabel{
+    text-align: left;
+    font-size: 18px;
+    padding: 2%;
+    height: 2vw;
+    width: 20%;
+    float: left;
+    margin-bottom: 2%;
+}
+.addInputLabelInfo{
+    text-align: left;
+    font-size: 18px;
+    padding: 2%;
+    height: 2vw;
+    width: 70%;
+    float: left;
+    margin-bottom: 1.5%;
+}
+.add_people_save_button{
+    margin-bottom: 1.5%;
+    padding: 2%;
+    margin-left: 30.2%;
+    font-size: 18px;
+    min-height: 4vw;
+    float: left;
+}
+.add_people_cancel_button{
+    margin-bottom: 1.5%;
+    margin-left: 5%;
+    padding: 2%;
+    font-size: 18px;
+    min-height: 4vw;
+    float: left;
+}
+.error{
+    text-align: center;
+    margin-bottom: 1.5%;
+    float:left;
+    width: 100%;
+    color:red;
+}

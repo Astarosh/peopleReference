@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:t="http://xmlns.jcp.org/jsf/passthrough"
+      >
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <ui:composition>
+            <h:panelGroup id="searchResultDiv" layout="block" styleClass="result_div">
+                <h:panelGroup rendered="#{searchController.isSearchSuccess}" layout="block" styleClass="title_found_humans">#{msg.found} #{searchController.humanCount} #{msg.humans}.</h:panelGroup> 
+                <h:dataTable rendered="#{searchController.humanCount > 0}" border="1" styleClass="humanTable" cellpadding="5px" cellspacing="5px" value="#{searchController.humanList}" var="h" id="humanTable" columnClasses="col1, col2">
+                    <h:outputText styleClass="title_search">#{msg.found} #{searchController.humanCount} #{msg.humans}.</h:outputText> 
+                    <h:column>
+                        <h:panelGroup styleClass="">
+                            #{h.lastname} #{h.firstname} #{h.patronymic}
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <h:form>
+                            <h:commandButton rendered="#{!searchController.isHumanDetailsShow}" styleClass="people_info_button" action="#{searchController.humanDetailsShow()}" value="#{msg.additional_info}">
+                                <f:ajax event="click" render="@form"></f:ajax>
+                            </h:commandButton>
+                            <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.birthdate}: </strong>#{h.birthdate}</h:panelGroup>
+                            <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.street}: </strong>#{h.address.streets.streetname}</h:panelGroup>
+                            <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.house}: </strong>#{h.address.housekey}
+                            </h:panelGroup>
+                            <h:commandButton rendered="#{searchController.isHumanDetailsShow}" styleClass="people_info_button_hide" action="#{searchController.humanDetailsHide()}" value="#{msg.hide}">
+                                <f:ajax event="click" render="@form"></f:ajax>
+                            </h:commandButton>
+                        </h:form>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:composition>
+    </body>
+</html>

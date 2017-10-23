@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 22, 2017 10:35:51 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="entity.Human" table="human" optimistic-lock="version">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="address" class="entity.Address" fetch="join">
+            <column name="addressid" not-null="true" />
+        </many-to-one>
+        <property name="sex" type="char">
+            <column name="sex" length="1" not-null="true" />
+        </property>
+        <property name="birthdate" type="date">
+            <column name="birthdate" length="13" not-null="true" />
+        </property>
+        <property name="firstname" type="string">
+            <column name="firstname" not-null="true" />
+        </property>
+        <property name="lastname" type="string">
+            <column name="lastname" not-null="true" />
+        </property>
+        <property name="patronymic" type="string">
+            <column name="patronymic" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
