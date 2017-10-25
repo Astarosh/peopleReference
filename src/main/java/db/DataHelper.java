@@ -1,26 +1,24 @@
 package db;
 
+import bean.Street;
 import entity.Address;
 import entity.HibernateUtil;
 import entity.Human;
-import entity.Streets;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 
 public class DataHelper {
 
@@ -71,35 +69,27 @@ public class DataHelper {
         if (addressList != null && !addressList.isEmpty()) {
             Criteria criteria = getSession().createCriteria(Human.class);
             Disjunction objDisjunction = Restrictions.disjunction();
-                for (Address address : addressList) {
-                    System.out.println(address.getId());
-                    objDisjunction.add(Restrictions.eq("address.id", address.getId()));
-                }
-                criteria.add(objDisjunction);
-                return criteria.list();
+            for (Address address : addressList) {
+                objDisjunction.add(Restrictions.eq("address.id", address.getId()));
+            }
+            criteria.add(objDisjunction);
+            return criteria.list();
         } else {
             return new ArrayList<>();
         }
     }
 
-    public List<Human> getHumansByStreet(String str) {
-        List<Streets> streetsList;
-        streetsList = getStreets(str);
-        if (streetsList != null && !streetsList.isEmpty()) {
-            List<Address> addressList;
-            addressList = getAddressByStreetid(streetsList.get(0).getId());
-            if (addressList != null && !addressList.isEmpty()) {
-                Criteria criteria = getSession().createCriteria(Human.class);
-                Disjunction objDisjunction = Restrictions.disjunction();
-                for (Address address : addressList) {
-                    System.out.println(address.getId());
-                    objDisjunction.add(Restrictions.eq("address.id", address.getId()));
-                }
-                criteria.add(objDisjunction);
-                return criteria.list();
-            } else {
-                return new ArrayList<>();
+    public List<Human> getHumansByStreet(Long streetId) {
+        List<Address> addressList;
+        addressList = getAddressByStreetid(streetId);
+        if (addressList != null && !addressList.isEmpty()) {
+            Criteria criteria = getSession().createCriteria(Human.class);
+            Disjunction objDisjunction = Restrictions.disjunction();
+            for (Address address : addressList) {
+                objDisjunction.add(Restrictions.eq("address.id", address.getId()));
             }
+            criteria.add(objDisjunction);
+            return criteria.list();
         } else {
             return new ArrayList<>();
         }
@@ -111,15 +101,20 @@ public class DataHelper {
         return criteria.list();
     }
 
-    public List<Streets> getStreets(String str) {
-//        System.out.println("searchbystreet");
-//        Criteria criteria = getSession().createCriteria(Streets.class);
-//        criteria.add(Restrictions.eq("streetname", str));
-        List<Streets> result;
-        org.hibernate.Query createQuery = getSession().createQuery("from Streets where streetname = :street_name");
-        createQuery.setParameter("street_name", str);
-        result = (List<Streets>) createQuery.list();
-        return result;
+    public List<Street> getStreets() {
+        Street street;
+        List<Street> streetList;
+        streetList = new ArrayList<>();
+        SQLQuery addScalar;
+        addScalar = getSession().createSQLQuery("select id, streetname from streets").addScalar("id", LongType.INSTANCE).addScalar("streetname", StringType.INSTANCE);
+        List<Object[]> rows = addScalar.list();
+        for (Object[] row : rows) {
+            street = new Street();
+            street.setId(Long.parseLong(row[0].toString()));
+            street.setStreetname(row[1].toString());
+            streetList.add(street);
+        }
+        return streetList;
     }
 
     public List<Address> getAddress(Address address) {
@@ -131,7 +126,7 @@ public class DataHelper {
         queryBuilder.append("(housekey = :house_key)");
         org.hibernate.Query query;
         query = getSession().createQuery(queryBuilder.toString());
-        query.setParameter("street_id", address.getStreets().getId());
+        query.setParameter("street_id", address.getStreetid());
         query.setParameter("house_key", address.getHousekey());
         result = (List<Address>) query.list();
         return result;

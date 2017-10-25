@@ -42,6 +42,5 @@ Contributor(s):
 <hibernate-reverse-engineering>
   <schema-selection match-catalog="humans"/>
   <table-filter match-name="human"/>
-  <table-filter match-name="streets"/>
   <table-filter match-name="address"/>
 </hibernate-reverse-engineering>

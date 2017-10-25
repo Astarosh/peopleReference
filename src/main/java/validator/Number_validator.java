@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package validators;
+package validator;
 
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
@@ -17,23 +17,30 @@ import javax.faces.validator.ValidatorException;
  *
  * @author Ast
  */
-@FacesValidator("validators.string_validator")
-public class String_validator implements Validator {
+@FacesValidator("validators.number_validator")
+public class Number_validator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         FacesMessage message;
         ResourceBundle bundle = ResourceBundle.getBundle("nls.properties", FacesContext.getCurrentInstance().getViewRoot().getLocale());
         try {
-            String str = null;
+            char c;
+            String str;
             if (value == null) {
                 throw new IllegalArgumentException(bundle.getString("enter_concern"));
+            } else if(!(value instanceof Number)){
+                //throw new IllegalArgumentException(bundle.getString("concern_mustnot_contains_strings"));
             }
             str = value.toString().trim();
+            for(int i = 0; i< str.length(); i++){
+                c = str.charAt(i);
+                if(!Character.isDigit(c)){
+                    throw new IllegalArgumentException(bundle.getString("concern_mustnot_contains_strings"));
+                }
+            }
             if (str.length() == 0) {
                 throw new IllegalArgumentException(bundle.getString("enter_concern"));
-            } else if(str.length() < 3){
-                throw new IllegalArgumentException(bundle.getString("small_concern"));
             }
         } catch (IllegalArgumentException ex) {
             message = new FacesMessage(ex.getMessage());
@@ -41,5 +48,4 @@ public class String_validator implements Validator {
             throw new ValidatorException(message);
         }
     }
-
 }

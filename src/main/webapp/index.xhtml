@@ -5,9 +5,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:t="http://xmlns.jcp.org/jsf/passthrough"
       >
     <h:head>
         <title>#{msg.reference}</title>
@@ -17,8 +14,8 @@
         <h:outputStylesheet library="css" name="index.css" />
     </h:head>
     <h:body>
-        <ui:include src="templates/searchTemplate.xhtml" />
-        <ui:include src="templates/infoTemplate.xhtml" />
-        <ui:include src="templates/addTemplate.xhtml" />
+        <ui:include src="template/searchTemplate.xhtml" />
+        <ui:include src="template/infoTemplate.xhtml" />
+        <ui:include src="template/addTemplate.xhtml" />
     </h:body>
 </html>

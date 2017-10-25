@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controllers;
+package controller;
 
+import bean.Street;
 import db.DataHelper;
 import entity.Address;
 import entity.Human;
-import entity.Streets;
 import enums.SearchType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,10 +16,9 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 
 /**
@@ -37,20 +36,23 @@ public class SearchController implements Serializable {
     private String sex;
     private Date date;
     private Date date2;
-    private Streets street;
+    private Street street;
     private Address address;
     private boolean isSearchSuccess;
     private List<Human> humanList;
     private int humanCount;
     private boolean isSearchByDate;
     private boolean isHumanDetailsShow;
+    
+    @ManagedProperty(value = "#{streetController}")
+    private StreetController streetController;
 
-    public boolean isIsHumanDetailsShow() {
-        return isHumanDetailsShow;
+    public StreetController getStreetController() {
+        return streetController;
     }
 
-    public void setIsHumanDetailsShow(boolean isHumanDetailsShow) {
-        this.isHumanDetailsShow = isHumanDetailsShow;
+    public void setStreetController(StreetController streetController) {
+        this.streetController = streetController;
     }
 
     public SearchController() {
@@ -61,7 +63,7 @@ public class SearchController implements Serializable {
         date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         date2 = date;
         human = new Human();
-        street = new Streets();
+        street = new Street();
         address = new Address();
     }
 
@@ -71,15 +73,14 @@ public class SearchController implements Serializable {
         ResourceBundle bundle = ResourceBundle.getBundle("nls.properties", FacesContext.getCurrentInstance().getViewRoot().getLocale());
         FacesContext context = FacesContext.getCurrentInstance();
         if (human.getFirstname() == null || human.getLastname() == null || human.getPatronymic() == null || street.getStreetname() == null || address.getHousekey() == 0) {
-            System.out.println("error");
             message = new FacesMessage(bundle.getString("add_error"));
             message.setSeverity(FacesMessage.SEVERITY_ERROR);
             context.addMessage("addForm", message);
         } else {
             String save;
-            List<Streets> streets = DataHelper.getInstance().getStreets(street.getStreetname());
-            if (!streets.isEmpty()) {
-                address.setStreets(streets.get(0));
+            Long streetID = streetController.getStreetId(street.getStreetname());
+            if (streetID != -1) {
+                address.setStreetid(streetID);
                 List<Address> addAddress = DataHelper.getInstance().getAddress(address);
                 if (addAddress.isEmpty()) {
                     int result = DataHelper.getInstance().getCountAddressRows();
@@ -107,7 +108,7 @@ public class SearchController implements Serializable {
 
     public void addPeopleShow() {
         human = new Human();
-        street = new Streets();
+        street = new Street();
         address = new Address();
         someChangesToValues(false, false, true, false);
     }
@@ -151,7 +152,8 @@ public class SearchController implements Serializable {
                 break;
             case STREET:
                 someChangesToValues(false, true, false, false);
-                humanList = DataHelper.getInstance().getHumansByStreet(searchString);
+                Long streetID = streetController.getStreetId(searchString);
+                humanList = DataHelper.getInstance().getHumansByStreet(streetID);
                 break;
             default:
                 someChangesToValues(false, true, false, false);
@@ -163,6 +165,14 @@ public class SearchController implements Serializable {
         } else {
             humanCount = 0;
         }
+    }
+
+    public boolean isIsHumanDetailsShow() {
+        return isHumanDetailsShow;
+    }
+
+    public void setIsHumanDetailsShow(boolean isHumanDetailsShow) {
+        this.isHumanDetailsShow = isHumanDetailsShow;
     }
 
     public boolean isIsSearchByDate() {
@@ -213,11 +223,11 @@ public class SearchController implements Serializable {
         this.address = address;
     }
 
-    public Streets getStreet() {
+    public Street getStreet() {
         return street;
     }
 
-    public void setStreet(Streets street) {
+    public void setStreet(Street street) {
         this.street = street;
     }
 

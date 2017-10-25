@@ -26,13 +26,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.hibernate.SessionFactory;
 import entity.HibernateUtil;
+import org.hibernate.HibernateException;
 
 @WebFilter(filterName = "HibernateSession",
 urlPatterns = "/*")
 public class HibernateSession implements Filter {
 
     private SessionFactory sessionFactory;
-    private static final boolean debug = false;
+    private static final boolean DEBUG = false;
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
@@ -43,7 +44,7 @@ public class HibernateSession implements Filter {
 
     private void doBeforeProcessing(RequestWrapper request, ResponseWrapper response)
             throws IOException, ServletException {
-        if (debug) {
+        if (DEBUG) {
             log("CheckSessionFilter:DoBeforeProcessing");
         }
         // Write code here to process the request and/or response before
@@ -52,36 +53,14 @@ public class HibernateSession implements Filter {
         // For example, a filter that implements setParameter() on a request
         // wrapper could set parameters on the request before passing it on
         // to the filter chain.
-	/*
-         String [] valsOne = {"val1a", "val1b"};
-         String [] valsTwo = {"val2a", "val2b", "val2c"};
-         request.setParameter("name1", valsOne);
-         request.setParameter("nameTwo", valsTwo);
-         */
 
         // For example, a logging filter might log items on the request object,
         // such as the parameters.
-	/*
-         for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
-         String name = (String)en.nextElement();
-         String values[] = request.getParameterValues(name);
-         int n = values.length;
-         StringBuffer buf = new StringBuffer();
-         buf.append(name);
-         buf.append("=");
-         for(int i=0; i < n; i++) {
-         buf.append(values[i]);
-         if (i < n-1)
-         buf.append(",");
-         }
-         log(buf.toString());
-         }
-         */
     }
 
     private void doAfterProcessing(RequestWrapper request, ResponseWrapper response)
             throws IOException, ServletException {
-        if (debug) {
+        if (DEBUG) {
             log("CheckSessionFilter:DoAfterProcessing");
         }
 
@@ -90,38 +69,8 @@ public class HibernateSession implements Filter {
 
         // For example, a logging filter might log the attributes on the
         // request object after the request has been processed. 
-	/*
-         for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-         String name = (String)en.nextElement();
-         Object value = request.getAttribute(name);
-         log("attribute: " + name + "=" + value.toString());
-
-         }
-         */
 
         // For example, a filter might append something to the response.
-	/*
-         PrintWriter respOut = new PrintWriter(response.getWriter());
-         respOut.println("<p><strong>This has been appended by an intrusive filter.</strong></p>");
-	
-         respOut.println("<p>Params (after the filter chain):<br>");
-         for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
-         String name = (String)en.nextElement();
-         String values[] = request.getParameterValues(name);
-         int n = values.length;
-         StringBuffer buf = new StringBuffer();
-         buf.append(name);
-         buf.append("=");
-         for(int i=0; i < n; i++) {
-         buf.append(values[i]);
-         if (i < n-1)
-         buf.append(",");
-         }
-         log(buf.toString());
-         respOut.println(buf.toString() + "<br>");
-         }
-         respOut.println("</p>");
-         */
     }
 
     /**
@@ -133,6 +82,7 @@ public class HibernateSession implements Filter {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
@@ -140,11 +90,10 @@ public class HibernateSession implements Filter {
 
         RequestWrapper wrappedRequest = new RequestWrapper((HttpServletRequest) request);
         ResponseWrapper wrappedResponse = new ResponseWrapper((HttpServletResponse) response);
-        //System.out.println("open session for " + wrappedRequest.getRequestURI());
         sessionFactory.getCurrentSession().beginTransaction();
         try {
 
-            if (debug) {
+            if (DEBUG) {
                 log("CheckSessionFilter:doFilter()");
             }
 
@@ -161,7 +110,6 @@ public class HibernateSession implements Filter {
 
 
             sessionFactory.getCurrentSession().getTransaction().commit();
-            //System.out.println("close session for " + wrappedRequest.getRequestURI());
 
             // If there was a problem, we want to rethrow it if it is
             // a known type, otherwise log it.
@@ -175,8 +123,7 @@ public class HibernateSession implements Filter {
                 sendProcessingError(problem, response);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | ServletException | HibernateException e) {
             if (sessionFactory.getCurrentSession().getTransaction().isActive()) {
                 sessionFactory.getCurrentSession().getTransaction().rollback();
             }
@@ -185,6 +132,7 @@ public class HibernateSession implements Filter {
 
     /**
      * Return the filter configuration object for this filter.
+     * @return 
      */
     public FilterConfig getFilterConfig() {
         return (this.filterConfig);
@@ -202,17 +150,20 @@ public class HibernateSession implements Filter {
     /**
      * Destroy method for this filter
      */
+    @Override
     public void destroy() {
     }
 
     /**
      * Init method for this filter
+     * @param filterConfig
      */
+    @Override
     public void init(FilterConfig filterConfig) {
         sessionFactory = HibernateUtil.getSessionFactory();
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (debug) {
+            if (DEBUG) {
                 log("CheckSessionFilter: Initializing filter");
             }
         }
@@ -239,26 +190,24 @@ public class HibernateSession implements Filter {
         if (stackTrace != null && !stackTrace.equals("")) {
             try {
                 response.setContentType("text/html");
-                PrintStream ps = new PrintStream(response.getOutputStream());
-                PrintWriter pw = new PrintWriter(ps);
-                pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
-
-                // PENDING! Localize this for next official release
-                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
-                pw.print(stackTrace);
-                pw.print("</pre></body>\n</html>"); //NOI18N
-                pw.close();
-                ps.close();
+                try (PrintStream ps = new PrintStream(response.getOutputStream()); PrintWriter pw = new PrintWriter(ps)) {
+                    pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
+                    
+                    // PENDING! Localize this for next official release
+                    pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
+                    pw.print(stackTrace);
+                    pw.print("</pre></body>\n</html>"); //NOI18N
+                }
                 response.getOutputStream().close();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
             }
         } else {
             try {
-                PrintStream ps = new PrintStream(response.getOutputStream());
-                t.printStackTrace(ps);
-                ps.close();
+                try (PrintStream ps = new PrintStream(response.getOutputStream())) {
+                    t.printStackTrace(ps);
+                }
                 response.getOutputStream().close();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
             }
         }
     }
@@ -272,7 +221,7 @@ public class HibernateSession implements Filter {
             pw.close();
             sw.close();
             stackTrace = sw.getBuffer().toString();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
         }
         return stackTrace;
     }
@@ -299,8 +248,7 @@ public class HibernateSession implements Filter {
         protected Hashtable localParams = null;
 
         public void setParameter(String name, String[] values) {
-            if (debug) {
-                //System.out.println("CheckSessionFilter::setParameter(" + name + "=" + values + ")" + " localParams = " + localParams);
+            if (DEBUG) {
             }
 
             if (localParams == null) {
@@ -319,8 +267,7 @@ public class HibernateSession implements Filter {
 
         @Override
         public String getParameter(String name) {
-            if (debug) {
-                //System.out.println("CheckSessionFilter::getParameter(" + name + ") localParams = " + localParams);
+            if (DEBUG) {
             }
             if (localParams == null) {
                 return getRequest().getParameter(name);
@@ -338,8 +285,7 @@ public class HibernateSession implements Filter {
 
         @Override
         public String[] getParameterValues(String name) {
-            if (debug) {
-                //System.out.println("CheckSessionFilter::getParameterValues(" + name + ") localParams = " + localParams);
+            if (DEBUG) {
             }
             if (localParams == null) {
                 return getRequest().getParameterValues(name);
@@ -349,8 +295,7 @@ public class HibernateSession implements Filter {
 
         @Override
         public Enumeration getParameterNames() {
-            if (debug) {
-                //System.out.println("CheckSessionFilter::getParameterNames() localParams = " + localParams);
+            if (DEBUG) {
             }
             if (localParams == null) {
                 return getRequest().getParameterNames();
@@ -360,8 +305,7 @@ public class HibernateSession implements Filter {
 
         @Override
         public Map getParameterMap() {
-            if (debug) {
-                //System.out.println("CheckSessionFilter::getParameterMap() localParams = " + localParams);
+            if (DEBUG) {
             }
             if (localParams == null) {
                 return getRequest().getParameterMap();
@@ -386,24 +330,6 @@ public class HibernateSession implements Filter {
         // as it went throught the filter chain. Since HttpServletRequest doesn't
         // have a get cookies method, we will need to store them locally as they
         // are being set.
-	/*
-         protected Vector cookies = null;
-	
-         // Create a new method that doesn't exist in HttpServletResponse
-         public Enumeration getCookies() {
-         if (cookies == null)
-         cookies = new Vector();
-         return cookies.elements();
-         }
-	
-         // Override this method from HttpServletResponse to keep track
-         // of cookies locally as well as in the wrapped response.
-         public void addCookie (Cookie cookie) {
-         if (cookies == null)
-         cookies = new Vector();
-         cookies.add(cookie);
-         ((HttpServletResponse)getResponse()).addCookie(cookie);
-         }
-         */
+
     }
 }

@@ -8,10 +8,7 @@ and open the template in the editor.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:t="http://xmlns.jcp.org/jsf/passthrough"
-      >
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <head>
         <title>TODO supply a title</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -28,12 +25,12 @@ and open the template in the editor.
                         </h:panelGroup>
                     </h:column>
                     <h:column>
-                        <h:form>
+                        <h:form id="infoForm">
                             <h:commandButton rendered="#{!searchController.isHumanDetailsShow}" styleClass="people_info_button" action="#{searchController.humanDetailsShow()}" value="#{msg.additional_info}">
                                 <f:ajax event="click" render="@form"></f:ajax>
                             </h:commandButton>
                             <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.birthdate}: </strong>#{h.birthdate}</h:panelGroup>
-                            <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.street}: </strong>#{h.address.streets.streetname}</h:panelGroup>
+                            <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.street}: </strong>#{streetController.getStreetName(h.address.streetid)}</h:panelGroup>
                             <h:panelGroup rendered="#{searchController.isHumanDetailsShow}" styleClass="addInputLabelInfo"><strong>#{msg.house}: </strong>#{h.address.housekey}
                             </h:panelGroup>
                             <h:commandButton rendered="#{searchController.isHumanDetailsShow}" styleClass="people_info_button_hide" action="#{searchController.humanDetailsHide()}" value="#{msg.hide}">

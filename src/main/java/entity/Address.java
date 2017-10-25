@@ -1,5 +1,5 @@
 package entity;
-// Generated Oct 22, 2017 10:35:50 AM by Hibernate Tools 4.3.1
+// Generated Oct 24, 2017 6:39:27 PM by Hibernate Tools 4.3.1
 
 
 import java.util.HashSet;
@@ -8,8 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,23 +21,22 @@ public class Address  implements java.io.Serializable {
 
 
      private long id;
-     private Streets streets;
      private long housekey;
+     private Long streetid;
      private Set humans = new HashSet(0);
 
     public Address() {
     }
 
 	
-    public Address(long id, Streets streets, long housekey) {
+    public Address(long id, long housekey) {
         this.id = id;
-        this.streets = streets;
         this.housekey = housekey;
     }
-    public Address(long id, Streets streets, long housekey, Set humans) {
+    public Address(long id, long housekey, Long streetid, Set humans) {
        this.id = id;
-       this.streets = streets;
        this.housekey = housekey;
+       this.streetid = streetid;
        this.humans = humans;
     }
    
@@ -55,16 +52,6 @@ public class Address  implements java.io.Serializable {
         this.id = id;
     }
 
-@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="streetid", nullable=false)
-    public Streets getStreets() {
-        return this.streets;
-    }
-    
-    public void setStreets(Streets streets) {
-        this.streets = streets;
-    }
-
     
     @Column(name="housekey", nullable=false)
     public long getHousekey() {
@@ -73,6 +60,16 @@ public class Address  implements java.io.Serializable {
     
     public void setHousekey(long housekey) {
         this.housekey = housekey;
+    }
+
+    
+    @Column(name="streetid")
+    public Long getStreetid() {
+        return this.streetid;
+    }
+    
+    public void setStreetid(Long streetid) {
+        this.streetid = streetid;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="address")
