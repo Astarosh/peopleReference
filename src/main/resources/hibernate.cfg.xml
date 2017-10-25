@@ -44,12 +44,12 @@ Contributor(s):
     <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
     <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
     <property name="hibernate.connection.url">jdbc:postgresql://postgres49500-search.mycloud.by:5432/humans</property>
-<!--    <property name="hibernate.show_sql">true</property>-->
+    <!--    <property name="hibernate.show_sql">true</property>-->
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.connection.datasource">jdbc/humans</property>
     <property name="hibernate.connection.username">postgres</property>
     <property name="hibernate.connection.password">12345</property>
-<!--    <property name="hbm2ddl.auto">validate</property>-->
+    <!--    <property name="hbm2ddl.auto">validate</property>-->
     <property name="hibernate.default_schema">public</property>
     <mapping resource="entity/Human.hbm.xml"/>
     <mapping resource="entity/Address.hbm.xml"/>
